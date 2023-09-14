@@ -25,18 +25,19 @@ buttonDir = tk.Button(frame, text="Folder selecteren", command=askDir)
 labelDir.grid(row=0, column=0)
 buttonDir.grid(row=0, column=1)
 
+listBox = tk.Listbox(frame)
+
 def askFiles():
     filenames = askopenfilenames(title='Bestanden selecteren')
-    print(filenames)
     if filenames:
-        labelFiles.config(text=filenames)
-        print(os.listdir(filenames))
+        for filename in filenames:
+            listBox.insert(tk.END, filename)
 
-labelFiles = tk.Label(frame, text="Geen bestanden geselecteerd")
 buttonFiles = tk.Button(frame, text="Bestanden selecteren", command=askFiles)
 
-labelFiles.grid(row=1, column=0)
 buttonFiles.grid(row=1, column=1)
+
+listBox.grid(row=1, column=0)
 
 frame.pack()
 
