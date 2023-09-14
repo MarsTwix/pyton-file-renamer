@@ -9,9 +9,12 @@ window.geometry("500x500")
 window.title("Bestand hernoemer")
 
 frame = tk.Frame(master=window)
+textInputFrame = tk.Frame(master=window)
 
 path = ""
 filenames = ()
+
+textInputLabels = ["Begintekst", "Beginnummer", "Interval"]
 
 def askDir():
     path = askdirectory(title='Folder selecteren')
@@ -39,6 +42,15 @@ buttonFiles.grid(row=1, column=1)
 
 listBox.grid(row=1, column=0)
 
-frame.pack()
+for i in range(len(textInputLabels)):
+    label = tk.Label(textInputFrame, text=textInputLabels[i])
+    label.grid(row=i, column=0, sticky="e")
+
+    textInput = tk.Text(textInputFrame, height=1, width=10)
+    textInput.grid(row=i, column=1, columnspan=2)
+
+frame.grid()
+
+textInputFrame.grid()
 
 window.mainloop()
