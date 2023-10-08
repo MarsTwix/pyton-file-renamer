@@ -1,15 +1,23 @@
 import tkinter as tk
 from tkinter.filedialog import askdirectory
+import converter
 
 TEXT_INPUT_LABELS = ["Begintekst:", "Beginnummer:", "Interval:"]
 
-labelDir = None
-filenameListBox = None
+label_dir = None
+filename_list_box = None
 
-def askDir():
+def ask_dir():
     path = askdirectory(title='Folder selecteren')
-    if path and labelDir:
-        labelDir.config(text=path)
+    if path and label_dir:
+        filenames = converter.get_filenames(path)
+
+        label_dir.config(text=path)
+
+        filename_list_box.delete(0, tk.END)
+
+        for filename in filenames:
+            filename_list_box.insert(tk.END, filename)
 
 def setup():
     window = tk.Tk()
@@ -17,35 +25,35 @@ def setup():
     window.title("Bestand hernoemer")
     return window
 
-def renderDirLabel(window, index):
-    global labelDir 
-    labelDir = tk.Label(window, text="Geen folder geselecteerd", wraplength=400)
-    labelDir.grid(row=index, sticky="w")
+def render_dir_label(window, index):
+    global label_dir 
+    label_dir = tk.Label(window, text="Geen folder geselecteerd", wraplength=400)
+    label_dir.grid(row=index, sticky="w")
 
-def renderSelectButtons(window, index):
-    tk.Button(window, text="Folder selecteren", command=askDir).grid(row=index, sticky="w")
+def render_select_buttons(window, index):
+    tk.Button(window, text="Folder selecteren", command=ask_dir).grid(row=index, sticky="w")
 
-def renderTextInput(window, index):
+def render_text_input(window, index):
     frame = tk.Frame(window)
     for i in range(len(TEXT_INPUT_LABELS)):
         label = tk.Label(frame, text=TEXT_INPUT_LABELS[i])
         label.grid(row=i, column=0, sticky="e")
 
-        textInput = tk.Text(frame, height=1, width=10)
-        textInput.insert(tk.END, "0")
+        text_input = tk.Text(frame, height=1, width=10)
+        text_input.insert(tk.END, "0")
 
-        textInput.grid(row=i, column=1, columnspan=2)
+        text_input.grid(row=i, column=1, columnspan=2)
     frame.grid(row=index, sticky="w")
 
-def renderConvertButton(window, index):
+def render_convert_button(window, index):
     tk.Button(window, text="Bestanden omzetten").grid(row=index, sticky="w")
 
-def renderListBox(window, index):
-    global filenameListBox
-    filenameListBox = tk.Listbox(window)
-    filenameListBox.grid(row=index, sticky="w")
+def render_list_box(window, index):
+    global filename_list_box
+    filename_list_box = tk.Listbox(window)
+    filename_list_box.grid(row=index, sticky="w")
 
-RENDER_SEQUENCE = [renderSelectButtons, renderTextInput, renderConvertButton, renderDirLabel, renderListBox]
+RENDER_SEQUENCE = [render_select_buttons, render_text_input, render_convert_button, render_dir_label, render_list_box]
 
 def render():
     window = setup()
