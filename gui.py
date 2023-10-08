@@ -50,8 +50,19 @@ def render_convert_button(window, index):
 
 def render_list_box(window, index):
     global filename_list_box
-    filename_list_box = tk.Listbox(window)
+
+    frame = tk.Frame(window)
+
+    filename_list_box = tk.Listbox(frame)
     filename_list_box.grid(row=index, sticky="w")
+
+    scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+    scrollbar.grid(row=index, column=1, sticky="ns")
+
+    filename_list_box.config(yscrollcommand=scrollbar.set)
+    scrollbar.config(command=filename_list_box.yview)
+
+    frame.grid(row=index, sticky="w")
 
 RENDER_SEQUENCE = [render_select_buttons, render_text_input, render_convert_button, render_dir_label, render_list_box]
 
