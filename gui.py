@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 import converter
 
-TEXT_INPUT_LABELS = ["Begintekst:", "Beginnummer:", "Interval:"]
+TEXT_INPUT_LABELS = [{"label": "Begintekst:", "value": "0"}, {"label": "Beginnummer:", "value": "0"}, {"label": "Interval:", "value": "1"}]
 
 label_dir = None
 filename_list_box = None
 
 def ask_dir():
-    path = askdirectory(title='Folder selecteren')
+    path = askdirectory(initialdir="./", title='Folder selecteren')
     if path and label_dir:
         filenames = converter.get_filenames(path)
 
@@ -36,11 +36,11 @@ def render_select_buttons(window, index):
 def render_text_input(window, index):
     frame = tk.Frame(window)
     for i in range(len(TEXT_INPUT_LABELS)):
-        label = tk.Label(frame, text=TEXT_INPUT_LABELS[i])
+        label = tk.Label(frame, text=TEXT_INPUT_LABELS[i]["label"])
         label.grid(row=i, column=0, sticky="e")
 
         text_input = tk.Text(frame, height=1, width=10)
-        text_input.insert(tk.END, "0")
+        text_input.insert(tk.END, TEXT_INPUT_LABELS[i]["value"])
 
         text_input.grid(row=i, column=1, columnspan=2)
     frame.grid(row=index, sticky="w")
