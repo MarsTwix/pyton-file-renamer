@@ -2,7 +2,11 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 import converter
 
-TEXT_INPUT_LABELS = [{"label": "Begintekst:", "value": "0"}, {"label": "Beginnummer:", "value": "0"}, {"label": "Interval:", "value": "1"}]
+TEXT_INPUT_LABELS = [
+    {"label": "Begintekst:", "value": "", "textbox": None}, 
+    {"label": "Beginnummer:", "value": "0", "textbox": None}, 
+    {"label": "Interval:", "value": "1", "textbox": None}
+]
 
 label_dir = None
 filename_list_box = None
@@ -18,6 +22,26 @@ def ask_dir():
 
         for filename in filenames:
             filename_list_box.insert(tk.END, filename)
+
+def convert_files():
+
+    converter.set_input_values(
+        TEXT_INPUT_LABELS[0]["textbox"].get("1.0", 'end-1c'),
+        TEXT_INPUT_LABELS[1]["textbox"].get("1.0", 'end-1c'),
+        TEXT_INPUT_LABELS[2]["textbox"].get("1.0", 'end-1c')
+    )
+
+    converter.rename_files()
+
+    TEXT_INPUT_LABELS[1]["textbox"].delete("1.0", tk.END)
+    TEXT_INPUT_LABELS[1]["textbox"].insert(tk.END, converter.begin_num)
+
+    filenames = converter.get_filenames(converter.path)
+
+    filename_list_box.delete(0, tk.END)
+
+    for filename in filenames:
+        filename_list_box.insert(tk.END, filename)
 
 def setup():
     window = tk.Tk()
@@ -39,14 +63,14 @@ def render_text_input(window, index):
         label = tk.Label(frame, text=TEXT_INPUT_LABELS[i]["label"])
         label.grid(row=i, column=0, sticky="e")
 
-        text_input = tk.Text(frame, height=1, width=10)
-        text_input.insert(tk.END, TEXT_INPUT_LABELS[i]["value"])
+        TEXT_INPUT_LABELS[i]["textbox"] = tk.Text(frame, height=1, width=10)
+        TEXT_INPUT_LABELS[i]["textbox"].insert(tk.END, TEXT_INPUT_LABELS[i]["value"])
 
-        text_input.grid(row=i, column=1, columnspan=2)
+        TEXT_INPUT_LABELS[i]["textbox"].grid(row=i, column=1, columnspan=2)
     frame.grid(row=index, sticky="w")
 
 def render_convert_button(window, index):
-    tk.Button(window, text="Bestanden omzetten").grid(row=index, sticky="w")
+    tk.Button(window, command=convert_files, text="Bestanden omzetten").grid(row=index, sticky="w")
 
 def render_list_box(window, index):
     global filename_list_box
