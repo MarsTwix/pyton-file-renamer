@@ -1,20 +1,21 @@
 import tkinter as tk
 from tkinter.filedialog import askdirectory
+from tkinter import ttk
 import converter
 
-TEXT_INPUT_LABELS = [
-    {"label": "Begintekst:", "value": "", "textbox": None}, 
-    {"label": "Beginnummer:", "value": "0", "textbox": None}, 
-    {"label": "Interval:", "value": "1", "textbox": None}
-]
-
+prefix_input = None
 label_dir = None
 filename_list_box = None
+
+progress = None
 
 def ask_dir():
     path = askdirectory(initialdir="./", title='Folder selecteren')
     if path and label_dir:
         filenames = converter.get_filenames(path)
+
+        prefix_input.delete("1.0", tk.END)
+        prefix_input.insert(tk.END, converter.prefix)
 
         label_dir.config(text=path)
 
@@ -26,15 +27,10 @@ def ask_dir():
 def convert_files():
 
     converter.set_input_values(
-        TEXT_INPUT_LABELS[0]["textbox"].get("1.0", 'end-1c'),
-        TEXT_INPUT_LABELS[1]["textbox"].get("1.0", 'end-1c'),
-        TEXT_INPUT_LABELS[2]["textbox"].get("1.0", 'end-1c')
+        prefix_input.get("1.0", 'end-1c'),
     )
 
     converter.rename_files()
-
-    TEXT_INPUT_LABELS[1]["textbox"].delete("1.0", tk.END)
-    TEXT_INPUT_LABELS[1]["textbox"].insert(tk.END, converter.begin_num)
 
     filenames = converter.get_filenames(converter.path)
 
@@ -58,19 +54,27 @@ def render_select_buttons(window, index):
     tk.Button(window, text="Folder selecteren", command=ask_dir).grid(row=index, sticky="w")
 
 def render_text_input(window, index):
+    global prefix_input
+
     frame = tk.Frame(window)
-    for i in range(len(TEXT_INPUT_LABELS)):
-        label = tk.Label(frame, text=TEXT_INPUT_LABELS[i]["label"])
-        label.grid(row=i, column=0, sticky="e")
 
-        TEXT_INPUT_LABELS[i]["textbox"] = tk.Text(frame, height=1, width=10)
-        TEXT_INPUT_LABELS[i]["textbox"].insert(tk.END, TEXT_INPUT_LABELS[i]["value"])
+    label = tk.Label(frame, text="Begintekst:")
+    label.grid(row=0, column=0, sticky="e")
 
-        TEXT_INPUT_LABELS[i]["textbox"].grid(row=i, column=1, columnspan=2)
+    prefix_input = tk.Text(frame, height=1, width=10)
+    prefix_input.insert(tk.END, "")
+
+    prefix_input.grid(row=0, column=1, columnspan=2)
     frame.grid(row=index, sticky="w")
 
 def render_convert_button(window, index):
     tk.Button(window, command=convert_files, text="Bestanden omzetten").grid(row=index, sticky="w")
+
+def render_progressbar(window, index):
+    global progressbar
+
+    progressbar = ttk.Progressbar(window, orient=tk.HORIZONTAL, length=160)
+    progressbar.grid(row=index, sticky="w")
 
 def render_list_box(window, index):
     global filename_list_box
@@ -88,7 +92,7 @@ def render_list_box(window, index):
 
     frame.grid(row=index, sticky="w")
 
-RENDER_SEQUENCE = [render_select_buttons, render_text_input, render_convert_button, render_dir_label, render_list_box]
+RENDER_SEQUENCE = [render_select_buttons, render_text_input, render_convert_button, render_progressbar, render_dir_label, render_list_box]
 
 def render():
     window = setup()
