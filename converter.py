@@ -43,7 +43,7 @@ def rename_files():
 
         new_name = prefix + "0" * (MAX_NUMBER_LENGTH - len(str(begin_num))) + str(begin_num) + file_extension
 
-        os.rename(os.path.join(path, filename), os.path.join(path, new_name))
+        os.rename(path + "/" + filename, path + "/" + new_name,)
 
         begin_num = begin_num + 1
 
